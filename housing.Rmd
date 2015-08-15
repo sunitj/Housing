@@ -85,6 +85,6 @@ i.plot$chart(tooltipContent = "#! function(key, x, y){
         '<p>' + y + ' in ' + x + '</p>'
         } !#")
 #i.plot$show('inline', include_assets = TRUE, cdn = TRUE)
-i.plot$save('figures/Figure_1_1.html', standalone = TRUE)
+i.plot$save('Figs/Figure_1_1.html', standalone = TRUE)
 ```
-<iframe src ='figures/Figure_1_1.html', width = "860px", height = "450px"></iframe>
+<iframe src ='Figs/Figure_1_1.html', width = "860px", height = "450px"></iframe>
