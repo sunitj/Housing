@@ -1,0 +1,100 @@
+---
+title: "Bay Area House Search"
+author: "Sunit Jain"
+date: "November 28, 2015"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+											echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r}
+library(googlesheets)
+library(dplyr)
+apartments.url="https://docs.google.com/spreadsheets/d/1gpeisjohBzspJyJXBcOpqyMo3uEt4BsjRyn5iPZ2WG0/edit?usp=sharing"
+apartments=gs_url(apartments.url,lookup=T,visibility = "private")
+apt=gs_read(apartments,ws = "Apartments Shortlist", verbose = T) %>% 
+    filter(Notes != "NA")
+```
+
+
+```{r}
+library(ggmap)
+AddressFrequency <- function(addresses){
+  tab <- table(addresses)
+  unique.points <- data.frame(address=names(tab), frequency = c(tab))
+  rownames(unique.points) <- NULL
+  unique.points
+}
+```
+## Apartments
+
+```{r}
+all.addresses <- as.character(apt$Address)
+freq <- AddressFrequency(all.addresses)
+freq <- cbind(freq, geocode(as.character(freq$address)))
+centre = c(mean(freq$lon, na.rm=TRUE), mean(freq$lat, na.rm=TRUE))
+freq[,1:2]
+```
+
+```{r}
+map = get_map(location = centre, zoom=11, scale=2, source = "google", maptype="roadmap")
+# to use factos for frequencies
+# freq$frequency <- factor(freq$frequency)
+map.plot = ggmap(map)
+map.plot = map.plot + geom_point(data = freq, aes(x = lon, y = lat), size=5, alpha=0.65)
+# to use color brewer gradient scale:
+# library(RColorBrewer)
+# map.plot = map.plot +  scale_colour_gradientn(colours=rainbow(4))
+print(map.plot)
+```
+
+## Neighborhood
+
+```{r}
+all.addresses <- as.character(apt$City.Neighborhood)
+freq <- AddressFrequency(all.addresses)
+freq <- cbind(freq, geocode(as.character(freq$address)))
+centre = c(mean(freq$lon, na.rm=TRUE), mean(freq$lat, na.rm=TRUE))
+freq %>% select(address,frequency) %>% 
+    arrange(desc(frequency))
+```
+
+```{r}
+map = get_map(location = centre, zoom=11, scale=2, source = "google", maptype="roadmap")
+# to use factos for frequencies
+#freq$frequency <- factor(freq$frequency)
+map.plot = ggmap(map)
+map.plot = map.plot + geom_point(data = freq, aes(x = lon, y = lat, colour = frequency), size=5)
+# to use color brewer gradient scale:
+#library(RColorBrewer)
+#map.plot = map.plot +  scale_colour_discrete()
+print(map.plot)
+```
+
+
+## By Price/SqFt
+```{r}
+freq=apt %>% select(City.Neighborhood,price.per.sq.ft) %>% 
+    group_by(City.Neighborhood) %>% 
+    summarise(Average=mean(price.per.sq.ft))
+colnames(freq)=c("address","average")
+freq <- cbind(freq, geocode(as.character(freq$address)))
+centre = c(mean(freq$lon, na.rm=TRUE), mean(freq$lat, na.rm=TRUE))
+freq %>% select(address,average) %>% 
+    arrange(desc(average))
+```
+
+```{r}
+map = get_map(location = centre, zoom=10, scale=2, source = "google", maptype="roadmap")
+# to use factos for frequencies
+#freq$frequency <- factor(freq$frequency)
+map.plot = ggmap(map)
+map.plot = map.plot + geom_point(data = freq, aes(x = lon, y = lat, size=average*-1))
+# to use color brewer gradient scale:
+#library(RColorBrewer)
+#map.plot = map.plot +  scale_colour_discrete()
+print(map.plot)
+```
