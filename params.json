@@ -1,0 +1,7 @@
+{
+  "name": "Housing",
+  "tagline": "*Trying to* explore trends in the local housing market using publicly available data.",
+  "body": "# Housing\r\n*Trying to* explore trends in the local housing market using publicly available data.\r\n\r\n## Data\r\nThis data set was downloaded from:\r\n### [Zillow](`http://www.zillow.com/research/data/`) on August 12, 2015. Direct links:\r\n\r\n- [Zip](http://files.zillowstatic.com/research/public/Zip.zip)\r\n- [Neighborhood](http://files.zillowstatic.com/research/public/Neighborhood.zip)\r\n- [City](http://files.zillowstatic.com/research/public/City.zip)\r\n\r\n[Washtenaw County](http://sunitj.github.io/Housing/Housing.html)\r\n\r\n- \r\n-",
+  "google": "",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
